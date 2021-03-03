@@ -7,7 +7,7 @@ def pf(bot,message):
     try:
         f = open('prefixes.json','r')
         prefixes = json.load(f)
-        return prefixes[str(message.guild.id)]
+        return prefixes[message.guild.id]
     except AttributeError:
         if message.channel.type is not discord.ChannelType.private:
             guild = message.guild
@@ -20,7 +20,7 @@ def pf(bot,message):
     except KeyError:
         f = open('prefixes.json','r')
         prefixes = json.load(f)
-        prefixes.update({str(message.guild.id):dpf})
+        prefixes.update({message.guild.id:dpf})
         f = open('prefixes.json','w')
         json.dump(prefixes,f)
         return dpf
