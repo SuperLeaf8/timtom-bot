@@ -1,0 +1,28 @@
+{
+    "basics": {
+        "help":"pulls up this window (t/help <section/command>)",
+        "test":"check if the bot is online"
+    },
+    "moderator": {
+        "kick":"outta here",
+        "ban":"outta here fr this time",
+        "tempban":"outta here but for some time",
+        "mute":"troll gets blocked",
+        "tempmute":"troll gets blocked for some time",
+        "setprefix":"change the prefix for this server is \"t/\" annoys you THAT much"
+    },
+    "music": {
+        "play":"bangin",
+        "stop":"no more bangin",
+        "pause":"youre a dud if you dont know how this command works",
+        "resume":"opposite of pause",
+        "loop":"hey tom figure out how to make the command work dumbass"
+    },
+    "capitalism": {
+        "register":"play the game f capitalism oh my god kill me kill me kill me",
+        "stats":"check how much debt you have",
+        "pay":"pay off your debt idfk",
+        "shaketree":"maybe youll get cool gromit mug maybe you die",
+        "give":"youre giving to the homeless so clearly youre not a member of state government"
+    }
+}
