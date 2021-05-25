@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import json
+from channel_block import if_channel_allowed
 
 class BasicCommands(commands.Cog):
     def __init__(self, bot):
@@ -15,6 +16,7 @@ class BasicCommands(commands.Cog):
         # use json to get all keys of all sections
         if len(section) >= 1:
             section = section[0]
+            section = section.lower()
             if section in sections:
                 command_dict = data[section]
                 embed = discord.Embed(
@@ -24,6 +26,7 @@ class BasicCommands(commands.Cog):
                 )
                 for k, v in command_dict.items():
                     embed.add_field(name=k,value=v,inline=False)
+                embed.set_footer(text="* means i havent coded the command yet")
                 await ctx.send(embed=embed)
             else:
                 commands_dict = {}
@@ -36,6 +39,7 @@ class BasicCommands(commands.Cog):
                         description=commands_dict[section],
                         color=discord.Color(help_color)
                     )
+                    embed.set_footer(text="* means i havent coded the command yet")
                     await ctx.send(embed=embed)
                 else:
                     await ctx.send("cuh idk what you mean")
@@ -64,8 +68,17 @@ class BasicCommands(commands.Cog):
                         value=explanation,
                         inline=False
                     )
+                embed.set_footer(text="* means i havent coded the command yet")
                 await ctx.author.send(embed=embed)
-            
-                
+    
+    @commands.check(if_channel_allowed)
+    @commands.command()
+    async def test(self, ctx):
+        await ctx.send("tested")
+    
+    @test.error
+    async def test_error(self, ctx, error):
+        if isinstance(error,commands.CheckFailure):
+            await ctx.send("disabled sorry bro")
 
         
