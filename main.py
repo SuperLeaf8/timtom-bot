@@ -91,6 +91,7 @@ YE GOTTA REMEMBER TO MAKE THE EVENT on_guild_join TO MAKE THE MUTE ROLE OVERRIDE
 check muteroles, make a role object with it, make the overrides for the new channel
 if the server doesnt have a mute role, or the role is a NoneType, just forget it
 """
+#hi
 
 
 @bot.event
