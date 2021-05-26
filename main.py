@@ -1,8 +1,10 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
+from discord.ext.commands import cooldown
 import json
-import tests, basics
+import tests, basics, capitalism, mod
 from traceback import print_exc
+import music
 
 """
 Cogs   https://discordpy.readthedocs.io/en/latest/ext/commands/cogs.html
@@ -10,9 +12,15 @@ Cogs   https://discordpy.readthedocs.io/en/latest/ext/commands/cogs.html
 
 team = [451900766958125076]
 
+
+
 ### prefix and initial stuff
 
 dpf = 't/'
+
+def get_dpf():
+    return dpf
+
 def pf(bot,message):
     try:
         f = open('prefixes.json','r')
@@ -54,35 +62,41 @@ async def on_guild_join(guild):
     json.dump(prefixes,f,indent=4)
     # mute stuff
     try:
-        f = open('muteroles.json','r')
-        data = json.load(f)
-        roleID = data[str(guild.id)]
-        role = guild.get_role(int(roleID))
-        if isinstance(role,type(None)):
-            raise KeyError
+        with open('muteroles.json','r') as f:
+            data = json.load(f)
+            roleID = data[str(guild.id)]
+            role = guild.get_role(int(roleID))
+            if isinstance(role,type(None)):
+                raise KeyError
     except KeyError:
         mperms = discord.Permissions(send_messages=False, read_messages=True)
         role = await guild.create_role(name='TimTom Mute',permissions=mperms)
         for c in guild.channels:
             perms = c.overwrites_for(role)
             perms.send_messages = False
-            perms.connect = False
+            perms.speak = False
             perms.add_reactions = False
             await c.set_permissions(role, overwrite=perms)
-        f = open('muteroles.json','r')
-        data = json.load(f)
-        data.update({str(guild.id):str(role.id)})
-        f = open('muteroles.json','w')
-        json.dump(data,f,indent=4)
+        with open('muteroles.json','r') as f:
+            data = json.load(f)
+            data.update({str(guild.id):str(role.id)})
+        with open('muteroles.json','w') as f:
+            json.dump(data,f,indent=4)
+            
+"""
+HEYYY THOMAS
+
+YE GOTTA REMEMBER TO MAKE THE EVENT on_guild_join TO MAKE THE MUTE ROLE OVERRIDE!
+
+check muteroles, make a role object with it, make the overrides for the new channel
+if the server doesnt have a mute role, or the role is a NoneType, just forget it
+"""
+#hi
+
 
 @bot.event
 async def on_ready():
     print("go time")
-    # embed = discord.Embed(
-    #     title="hey",
-    #     description="im up",
-    #     color=discord.Color(0x4fff4f)
-    # )
     for team_member_id in team:
         team_member = bot.get_user(team_member_id)
         embed = discord.Embed(
@@ -90,14 +104,21 @@ async def on_ready():
             description="im online",
             color=discord.Color(0x4fff4f)
         )
-        await team_member.send(embed=embed)
-###
+        # await team_member.send(embed=embed)
+    await bot.change_presence(activity=discord.Game(name="we killed isabelle"))
 
+###
 
 
 ### cogs
 
-cogs = [tests.TestCommands(bot),basics.BasicCommands(bot)]
+cogs = [
+        tests.TestCommands(bot),
+        basics.BasicCommands(bot),
+        capitalism.CapitalistCommands(bot),
+        mod.ModCommands(bot),
+        music.MusicCommands(bot)
+    ]
 for cog in cogs:
     bot.add_cog(cog)
 

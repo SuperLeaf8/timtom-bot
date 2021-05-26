@@ -4,25 +4,32 @@
         "test":"check if the bot is online"
     },
     "moderator": {
-        "kick":"outta here",
-        "ban":"outta here fr this time",
-        "tempban":"outta here but for some time",
+        "kick":"outta here (t/kick <member/member.id> <reason>)",
+        "ban":"outta here fr this time (t/ban <member/member.id> <reason>)",
+        "unban":"aight you can come back (t/unban <member_member.id>)",
+        "*tempban":"dont come back but come back later (t/tempban <member/member.id> <time> <reason>",
         "mute":"troll gets blocked",
-        "tempmute":"troll gets blocked for some time",
-        "setprefix":"change the prefix for this server is \"t/\" annoys you THAT much"
+        "*tempmute":"blocked reported disliked #ratio",
+        "unmute":"troll gets unblocked",
+        "*setprefix":"change the prefix for this server if \"t/\" annoys you THAT much (t/setprefix <new_prefix>)",
+        "disable":"disabled regular commands for the channel (t/disable)",
+        "enable":"enables a disabled command for the channel (t/enable)"
     },
     "music": {
-        "play":"bangin",
-        "stop":"no more bangin",
-        "pause":"youre a dud if you dont know how this command works",
-        "resume":"opposite of pause",
-        "loop":"hey tom figure out how to make the command work dumbass"
+        "*play":"bangin kk songs you buy from shop(t/play <kk_song_name>)",
+        "*stop":"no more bangin (t/stop)",
+        "*pause":"youre a dud if you dont know how this command works (t/pause)",
+        "*resume":"opposite of pause (t/resume)",
+        "*loop":"hey tom figure out how to make the command work dumbass (t/loop)"
     },
     "capitalism": {
         "register":"play the game f capitalism oh my god kill me kill me kill me",
         "stats":"check how much debt you have",
         "pay":"pay off your debt idfk",
-        "shaketree":"maybe youll get cool gromit mug maybe you die",
-        "give":"youre giving to the homeless so clearly youre not a member of state government"
+        "daily":"free money but you can only use it once in every 24 hours",
+        "*shaketree":"maybe youll get cool gromit mug maybe you die",
+        "*give":"youre giving to the homeless so clearly youre not a member of state government",
+        "*shop":"buy stuff along with kk music (t/shop <*item>) *you can buy or see whats in the shop",
+        "*sell":"capitalism 101 at its finest (t/sell <amount> <item>)"
     }
 }
