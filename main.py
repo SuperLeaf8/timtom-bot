@@ -86,14 +86,29 @@ async def on_guild_join(guild):
 """
 HEYYY THOMAS
 
-YE GOTTA REMEMBER TO MAKE THE EVENT on_guild_join TO MAKE THE MUTE ROLE OVERRIDE!
+YE GOTTA REMEMBER TO MAKE THE EVENT on_guild_channel_update TO MAKE THE MUTE ROLE OVERRIDE!
 
 check muteroles, make a role object with it, make the overrides for the new channel
 if the server doesnt have a mute role, or the role is a NoneType, just forget it
+
+actually i dont think i need it since i can make it so in fix_mute(), it redoes all the channel overrides
 """
-#hi
-
-
+# @bot.event
+# async def on_guild_channel_update(channel):
+#     with open("muteroles.json","r") as f:
+#         data = json.load(f)
+#         try:
+#             roleID = data[str(channel.guild.id)]
+#             role = channel.guild.get_role(int(roleID))
+#             if not role:
+#                 raise KeyError
+#             perms = channel.overwrites_for(role)
+#             perms.send_messages = False
+#             perms.speak = False
+#             perms.add_reactions = False
+#             await channel.set_permissions(role, overwrite=perms)
+#         except KeyError:
+#             pass
 @bot.event
 async def on_ready():
     print("go time")

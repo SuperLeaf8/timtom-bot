@@ -13,22 +13,22 @@ class ModCommands(commands.Cog):
                 data = json.load(f)
                 roleID = data[str(guild.id)]
                 role = guild.get_role(int(roleID))
-                if isinstance(role,type(None)):
+                if not role:
                     raise KeyError
         except KeyError:
             mperms = discord.Permissions(send_messages=False, read_messages=True)
             role = await guild.create_role(name='TimTom Mute',permissions=mperms)
-            for c in guild.channels:
-                perms = c.overwrites_for(role)
-                perms.send_messages = False
-                perms.speak = False
-                perms.add_reactions = False
-                await c.set_permissions(role, overwrite=perms)
-            with open('muteroles.json','r') as f:
-                data = json.load(f)
-                data.update({str(guild.id):str(role.id)})
-            with open('muteroles.json','w') as f:
-                json.dump(data,f,indent=4)
+        for c in guild.channels:
+            perms = c.overwrites_for(role)
+            perms.send_messages = False
+            perms.speak = False
+            perms.add_reactions = False
+            await c.set_permissions(role, overwrite=perms)
+        with open('muteroles.json','r') as f:
+            data = json.load(f)
+            data.update({str(guild.id):str(role.id)})
+        with open('muteroles.json','w') as f:
+            json.dump(data,f,indent=4)
 
     @commands.has_permissions(kick_members=True)
     @commands.command()
@@ -91,6 +91,7 @@ class ModCommands(commands.Cog):
         embed.set_author(name=f"{member.name}#{member.discriminator}",icon_url=member.avatar_url)
         embed.set_footer(text="ok now stop being annoying")
         await ctx.send(embed=embed)
+        
 
     @commands.has_permissions(ban_members=True)
     @commands.command()
@@ -188,14 +189,24 @@ class ModCommands(commands.Cog):
     async def setprefix(self, ctx, new_pf: str):
         with open("prefixes.json","r") as f:
             data = json.load(f)
-            try:
-                prefix = data[str(ctx.guild.id)]
-            except KeyError:
-                data.update({str(ctx.guild.id):"t/"})
-            data[str(ctx.guild.id)] = new_pf
+            if new_pf == "default":
+                try:
+                    del data[str(ctx.guild.id)]
+                except KeyError:
+                    await ctx.send("its already set as default")
+                    return
+            else:
+                try:
+                    prefix = data[str(ctx.guild.id)]
+                except KeyError:
+                    data.update({str(ctx.guild.id):"t/"})
+                data[str(ctx.guild.id)] = new_pf
         with open("prefixes.json","w") as f:
             json.dump(data,f,indent=4)
-        await ctx.send(f"set prefix to: `{new_pf}`")
+        if new_pf == "default":
+            await ctx.send("prefix set to default (t/)")
+        else:
+            await ctx.send(f"set prefix to: `{new_pf}`")
         
     @kick.error
     @mute.error

@@ -21,16 +21,22 @@ class MusicCommands(commands.Cog):
     @commands.command()
     async def leave(self, ctx):
         voice = get(self.bot.voice_clients,guild=ctx.guild)
-        channel = voice.channel
-        try:
-            await voice.disconnect()
-        except AttributeError as e:
-            await ctx.send("im not in a channel")
-            print(e)
+        if not voice:
+            await ctx.send("am not in channel")
+            return
+        await voice.disconnect()
+        
 
     @commands.command()
     async def testplay(self,ctx):
         music = get(self.bot.voice_clients,guild=ctx.guild)
+        channel = ctx.author.voice.channel
+        if not channel:
+            await ctx.send("youre not in a channel")
+            return
+        if not music:
+            await ctx.send("am not in channel")
+            return
         def replay():
             if str(ctx.guild.id) in self.loops:
                 music.play(discord.FFmpegPCMAudio("test.mp3"))
@@ -42,8 +48,13 @@ class MusicCommands(commands.Cog):
     async def loop(self, ctx): # can only loop when music play
         music = get(self.bot.voice_clients,guild=ctx.guild)
         channel = ctx.author.voice.channel
-        print(type(music))
-        if music:
+        if not channel:
+            await ctx.send("youre not in a channel")
+            return
+        if not music:
+            await ctx.send("am not in channel")
+            return
+        if music.is_playing or music.is_paused: # if music is playing or music is PAUSED
             if not str(ctx.guild.id) in self.loops:
                 self.loops.append(str(ctx.guild.id))
                 await ctx.send("loop enabled")
@@ -51,7 +62,8 @@ class MusicCommands(commands.Cog):
                 self.loops.remove(str(ctx.guild.id))
                 await ctx.send("loop disabled")
         else:
-            await ctx.send("im not in a channel")
+            await ctx.send("music not playing")
+            return
     
     @commands.command()
     async def pause(self,ctx):
@@ -59,7 +71,28 @@ class MusicCommands(commands.Cog):
         channel = ctx.author.voice.channel
         if not channel:
             await ctx.send("youre not in a channel")
+            return
         if not music:
             await ctx.send("am not in channel")
             return
-        
+        if music.is_playing:
+            music.pause()
+            await ctx.send("paused")
+        else:
+            await ctx.send("music not playing")
+    
+    @commands.command()
+    async def stop(self,ctx):
+        music = get(self.bot.voice_clients,guild=ctx.guild)
+        channel = ctx.author.voice.channel
+        if not channel:
+            await ctx.send("youre not in a channel")
+            return
+        if not music:
+            await ctx.send("am not in channel")
+            return
+        if music.is_playing or music.is_paused:
+            music.stop()
+            await ctx.send("stopped")
+        else:
+            await ctx.send("music not playing")
