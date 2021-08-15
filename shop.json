@@ -1,0 +1,12 @@
+[
+    {
+        "name": "my_place",
+        "type": "music",
+        "price": 3200
+    },
+    {
+        "name": "orange",
+        "type": "regular",
+        "price": 400
+    }
+]

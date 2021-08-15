@@ -76,6 +76,14 @@ class BasicCommands(commands.Cog):
     async def test(self, ctx):
         await ctx.send("tested")
     
+    @commands.command()
+    async def ping(self, ctx):
+        await ctx.send(f"ping: {bot.latency}")
+
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        print(error)
+
     @test.error
     async def test_error(self, ctx, error):
         if isinstance(error,commands.CheckFailure):
