@@ -13,27 +13,27 @@ class ModCommands(commands.Cog):
                 data = json.load(f)
                 roleID = data[str(guild.id)]
                 role = guild.get_role(int(roleID))
-                if isinstance(role,type(None)):
+                if not role:
                     raise KeyError
         except KeyError:
             mperms = discord.Permissions(send_messages=False, read_messages=True)
             role = await guild.create_role(name='TimTom Mute',permissions=mperms)
-            for c in guild.channels:
-                perms = c.overwrites_for(role)
-                perms.send_messages = False
-                perms.speak = False
-                perms.add_reactions = False
-                await c.set_permissions(role, overwrite=perms)
-            with open('muteroles.json','r') as f:
-                data = json.load(f)
-                data.update({str(guild.id):str(role.id)})
-            with open('muteroles.json','w') as f:
-                json.dump(data,f,indent=4)
+        for c in guild.channels:
+            perms = c.overwrites_for(role)
+            perms.send_messages = False
+            perms.speak = False
+            perms.add_reactions = False
+            await c.set_permissions(role, overwrite=perms)
+        with open('muteroles.json','r') as f:
+            data = json.load(f)
+            data.update({str(guild.id):str(role.id)})
+        with open('muteroles.json','w') as f:
+            json.dump(data,f,indent=4)
 
     @commands.has_permissions(kick_members=True)
     @commands.command()
     async def kick(self, ctx, member: discord.Member,*,reason="no reason lol"):
-        if ctx.author.top_role <= member.top_role:
+        if (ctx.author.top_role <= member.top_role and not ctx.author.guild_permissions.administrator) or (ctx.author != ctx.guild.owner):
             await ctx.send("you cant do that")
             return
         await member.kick(reason=reason)
@@ -47,7 +47,7 @@ class ModCommands(commands.Cog):
     @commands.has_permissions(kick_members=True)
     @commands.command()
     async def mute(self, ctx, member: discord.Member,*,reason="shut up"):
-        if ctx.author.top_role <= member.top_role:
+        if (ctx.author.top_role <= member.top_role and not ctx.author.guild_permissions.administrator) or (ctx.author != ctx.guild.owner):
             await ctx.send("you cant do that")
             return
         await self.fixmute(ctx.guild)
@@ -91,15 +91,16 @@ class ModCommands(commands.Cog):
         embed.set_author(name=f"{member.name}#{member.discriminator}",icon_url=member.avatar_url)
         embed.set_footer(text="ok now stop being annoying")
         await ctx.send(embed=embed)
+        
 
     @commands.has_permissions(ban_members=True)
     @commands.command()
     async def ban(self, ctx, user:discord.User,*, reason="blocked"):
         try:
-            member = await ctx.guild.get_member(user.id)
+            member = ctx.guild.get_member(user.id)
             if member == None: # member isnt in server
                 raise discord.NotFound # prevents role check (that wouldve caused error)
-            if ctx.author.top_role <= member.top_role: # role check if user was in server
+            if (ctx.author.top_role <= member.top_role and not ctx.author.guild_permissions.administrator) or (ctx.author != ctx.guild.owner): # role check if user was in server
                 await ctx.send("you cant do that")
                 return
         except discord.NotFound:
@@ -122,15 +123,15 @@ class ModCommands(commands.Cog):
     @commands.has_permissions(ban_members=True)
     @commands.command()
     async def unban(self, ctx, user:discord.User):
-        try:
-            member = await ctx.guild.get_member(user.id)
-            if member == None: # member isnt in server
-                raise discord.NotFound # prevents role check (that wouldve caused error)
-            if ctx.author.top_role <= member.top_role: # role check if user was in server
-                await ctx.send("you cant do that")
-                return
-        except discord.NotFound:
-            pass
+        # try:
+        #     member = await ctx.guild.get_member(user.id)
+        #     if member == None: # member isnt in server
+        #         raise discord.NotFound # prevents role check (that wouldve caused error)
+        #     if ctx.author.top_role <= member.top_role: # role check if user was in server
+        #         await ctx.send("you cant do that")
+        #         return
+        # except discord.NotFound:
+        # pass
         try:
             await ctx.guild.fetch_ban(user)
             await ctx.guild.unban(user=user)
@@ -188,14 +189,24 @@ class ModCommands(commands.Cog):
     async def setprefix(self, ctx, new_pf: str):
         with open("prefixes.json","r") as f:
             data = json.load(f)
-            try:
-                prefix = data[str(ctx.guild.id)]
-            except KeyError:
-                data.update({str(ctx.guild.id):"t/"})
-            data[str(ctx.guild.id)] = new_pf
+            if new_pf == "default":
+                try:
+                    del data[str(ctx.guild.id)]
+                except KeyError:
+                    await ctx.send("its already set as default")
+                    return
+            else:
+                try:
+                    prefix = data[str(ctx.guild.id)]
+                except KeyError:
+                    data.update({str(ctx.guild.id):"t/"})
+                data[str(ctx.guild.id)] = new_pf
         with open("prefixes.json","w") as f:
             json.dump(data,f,indent=4)
-        await ctx.send(f"set prefix to: `{new_pf}`")
+        if new_pf == "default":
+            await ctx.send("prefix set to default (t/)")
+        else:
+            await ctx.send(f"set prefix to: `{new_pf}`")
         
     @kick.error
     @mute.error
@@ -208,6 +219,11 @@ class ModCommands(commands.Cog):
     async def mod_error(self,ctx,error):
         s = ", "
         if isinstance(error,commands.MissingPermissions):
-            await ctx.send(f"you cant do that because you cant: {s.join(error.missing_pems)}")
+            await ctx.send(f"you cant do that because you cant: {s.join(error.missing_perms)}")
         if isinstance(error,commands.BotMissingPermissions):
-            await ctx.send(f"i cant do that because i cant: {s.join(error.missing_pems)}")
+            print(type(error))
+            print(error)
+            await ctx.send(f"i cant do that because i cant: {s.join(error.missing_perms)}")
+        if isinstance(error,commands.CommandInvokeError):
+            if isinstance(error.original,discord.errors.Forbidden):
+                await ctx.send("my role is too low probably")
