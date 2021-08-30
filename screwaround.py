@@ -25,6 +25,4 @@ class ScrewAround(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    @commands.Cog.listener()
-    async def on_command_error(self,ctx,error):
-        print(error)
+   

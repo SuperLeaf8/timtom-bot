@@ -72,9 +72,9 @@ class CapitalistCommands(commands.Cog):
 			while not found:
 				reg_item = reg_items[randint(0,len(reg_items)-1)]
 				if not reg_item in items:
-					found = True
-				else:
-					print("fuck")
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																						found = True
+				# else:
+				# 	print("fuck")
 			items.append(reg_item)
 		with open("shop.json","r") as f:
 			data = json.load(f)
@@ -228,3 +228,24 @@ class CapitalistCommands(commands.Cog):
 		with open("debt.json","w") as f:
 			json.dump(data,f,indent=4)
 		await ctx.send(f"ok you gave {person.mention} {amount} bells")
+	
+	@commands.command()
+	async def shop(self,ctx):
+		with open("shop.json","r") as f:
+			data = json.load(f)
+			items = []
+			for d in data:
+				shop_item = item.Item(d["name"],d["type"],d["price"])
+				items.append(shop_item)
+		embed = discord.Embed(
+			title="Hourly shop items:",
+			description=discord.Embed.Empty,
+			color=discord.Color(0xb2e800)
+		)
+		
+		for i in items:
+			embed.add_field(name=i.name,value=f"Price: {i.price} bells\nType: {i.itemtype}",inline=False)
+		embed.set_footer(text="hi :)")
+		await ctx.send(embed=embed)
+
+
