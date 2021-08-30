@@ -50,10 +50,10 @@ class MusicCommands(commands.Cog):
 	
 	@commands.command()
 	async def join(self, ctx):
-		channel = ctx.author.voice.channel
-		if not channel:
-			await ctx.send("youre not in a channel")
+		if not ctx.author.voice:
+			await ctx.send("youre not in channel")
 			return
+		channel = ctx.author.voice.channel
 		voice = get(self.bot.voice_clients,guild=ctx.guild)
 		if not voice:
 			await channel.connect()
@@ -76,11 +76,11 @@ class MusicCommands(commands.Cog):
 	@commands.command()
 	async def testplay(self,ctx):
 		music = get(self.bot.voice_clients,guild=ctx.guild)
+		if not ctx.author.voice:
+			await ctx.send("youre not in channel")
+			return
 		channel = ctx.author.voice.channel
 		audio = discord.FFmpegPCMAudio("test.mp3")
-		if not channel:
-			await ctx.send("youre not in a channel")
-			return
 		if not music:
 			await ctx.send("am not in channel")
 			return
@@ -96,6 +96,9 @@ class MusicCommands(commands.Cog):
 	@commands.command() # for fun
 	async def yt_play(self,ctx,*,song):
 		music = get(self.bot.voice_clients,guild=ctx.guild)
+		if not ctx.author.voice:
+			await ctx.send("youre not in channel")
+			return
 		channel = ctx.author.voice.channel
 		filename = f'{ctx.guild.id}_music.mp3'
 		ydl_opts = {
@@ -134,9 +137,6 @@ class MusicCommands(commands.Cog):
 		print("\n\ndownloaded",title)
 		
 		audio = discord.FFmpegPCMAudio(executable='C:\\ffmpeg\\bin\\ffmpeg.exe',source=destiny)
-		if not channel:
-			await ctx.send("youre not in a channel")
-			return
 		if not music:
 			await ctx.send("am not in channel")
 			return
@@ -159,6 +159,9 @@ class MusicCommands(commands.Cog):
 	@commands.command()
 	async def play(self, ctx,*,name):
 		music = get(self.bot.voice_clients,guild=ctx.guild)
+		if not ctx.author.voice:
+			await ctx.send("youre not in channel")
+			return
 		channel = ctx.author.voice.channel
 		if str(ctx.guild.id) in self.loops:
 			self.loops.remove(str(ctx.guild.id))
@@ -190,9 +193,6 @@ class MusicCommands(commands.Cog):
 		file = f"{os.getcwd()}\\kk_music\\{name}.mp3"
 		
 		audio = discord.FFmpegPCMAudio(executable='C:\\ffmpeg\\bin\\ffmpeg.exe',source=file)
-		if not channel:
-			await ctx.send("youre not in a channel")
-			return
 		if not music:
 			await ctx.send("am not in channel")
 			return
@@ -210,10 +210,10 @@ class MusicCommands(commands.Cog):
 	@commands.command()
 	async def loop(self, ctx): # can only loop when music play
 		music = get(self.bot.voice_clients,guild=ctx.guild)
-		channel = ctx.author.voice.channel
-		if not channel:
-			await ctx.send("youre not in a channel")
+		if not ctx.author.voice:
+			await ctx.send("youre not in channel")
 			return
+		channel = ctx.author.voice.channel
 		if not music:
 			await ctx.send("am not in channel")
 			return
@@ -231,10 +231,10 @@ class MusicCommands(commands.Cog):
 	@commands.command()
 	async def pause(self,ctx):
 		music = get(self.bot.voice_clients,guild=ctx.guild)
-		channel = ctx.author.voice.channel
-		if not channel:
-			await ctx.send("youre not in a channel")
+		if not ctx.author.voice:
+			await ctx.send("youre not in channel")
 			return
+		channel = ctx.author.voice.channel
 		if not music:
 			await ctx.send("am not in channel")
 			return
@@ -247,10 +247,10 @@ class MusicCommands(commands.Cog):
 	@commands.command()
 	async def stop(self,ctx):
 		music = get(self.bot.voice_clients,guild=ctx.guild)
-		channel = ctx.author.voice.channel
-		if not channel:
-			await ctx.send("youre not in a channel")
+		if not ctx.author.voice:
+			await ctx.send("youre not in channel")
 			return
+		channel = ctx.author.voice.channel
 		if not music:
 			await ctx.send("am not in channel")
 			return
@@ -265,10 +265,10 @@ class MusicCommands(commands.Cog):
 	@commands.command()
 	async def resume(self, ctx):
 		music = get(self.bot.voice_clients,guild=ctx.guild)
-		channel = ctx.author.voice.channel
-		if not channel:
-			await ctx.send("youre not in a channel")
+		if not ctx.author.voice:
+			await ctx.send("youre not in channel")
 			return
+		channel = ctx.author.voice.channel
 		if not music:
 			await ctx.send("am not in channel")
 			return
@@ -281,10 +281,10 @@ class MusicCommands(commands.Cog):
 	@commands.command()
 	async def setvolume(self,ctx,number:int):
 		voice = get(self.bot.voice_clients,guild=ctx.guild)
-		channel = ctx.author.voice.channel
-		if not channel:
-			await ctx.send("you are not in a channel")
+		if not ctx.author.voice:
+			await ctx.send("youre not in channel")
 			return
+		channel = ctx.author.voice.channel
 		if not voice:
 			await ctx.send("im not in a channel")
 		if not voice.is_playing():
@@ -302,4 +302,19 @@ class MusicCommands(commands.Cog):
 	async def volume(self,ctx):
 		x = self.volumes.get(ctx.guild.id,1.0)
 		await ctx.send(f"volume is currently {x*100}%")
-		
+	
+
+	# use for more organization
+
+	@play.error
+	@setvolume.error
+	@yt_play.error
+	@pause.error
+	@stop.error
+	@resume.error
+	@loop.error
+	@join.error
+	async def music_error(self,ctx,error):
+		print(error)
+		if isinstance(error,commands.CommandInvokeError):
+			print(error)
