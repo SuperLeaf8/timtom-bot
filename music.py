@@ -45,6 +45,7 @@ class MusicCommands(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 		self.loops = []
+		self.volumes = {}
 
 	
 	@commands.command()
@@ -66,6 +67,8 @@ class MusicCommands(commands.Cog):
 		if not voice:
 			await ctx.send("am not in channel")
 			return
+		if str(ctx.guild.id) in self.loops:
+			self.loops.remove(str(ctx.guild.id))
 		await voice.disconnect()
 		await ctx.send("left")
 		
@@ -85,7 +88,9 @@ class MusicCommands(commands.Cog):
 			source = discord.FFmpegPCMAudio("test.mp3")
 			if str(ctx.guild.id) in self.loops:		
 				music.play(source,after=lambda bruh: replay()) # THIS IS FUCKING CRASHING
+				music.source = discord.PCMVolumeTransformer(music.source,volume=self.volumes.get(ctx.guild.id,1.0))
 		music.play(audio,after=lambda check: replay())
+		music.source = discord.PCMVolumeTransformer(music.source,volume=self.volumes.get(ctx.guild.id,1.0))
 		await ctx.send("vibe time")
 
 	@commands.command() # for fun
@@ -139,15 +144,18 @@ class MusicCommands(commands.Cog):
 			source = discord.FFmpegPCMAudio(executable='C:\\ffmpeg\\bin\\ffmpeg.exe',source=f"music_files\\{filename}")
 			if str(ctx.guild.id) in self.loops:		
 				music.play(source,after=lambda bruh: replay()) # THIS IS FUCKING CRASHING
+				music.source = discord.PCMVolumeTransformer(music.source,volume=self.volumes.get(ctx.guild.id,1.0))
 		if music.is_playing():
 			music.stop()
 		music.play(audio,after=lambda check: replay())
+		music.source = discord.PCMVolumeTransformer(music.source,volume=self.volumes.get(ctx.guild.id,1.0))
 		await ctx.send("playing")
 	@commands.command()
 	async def testfile(self,ctx):
 		music = get(self.bot.voice_clients,guild=ctx.guild)
 		channel = ctx.author.voice.channel
-		music.play(source = discord.FFmpegPCMAudio(executable='C:\\ffmpeg\\bin\\ffmpeg.exe',source=f"music_files\\{ctx.guild.id}_music.mp3"))
+		music.play(source = discord.FFmpegPCMAudio(source=f"music_files\\{ctx.guild.id}_music.mp3"))
+		music.source = discord.PCMVolumeTransformer(music.source,volume=1.0)
 	@commands.command()
 	async def play(self, ctx,*,name):
 		music = get(self.bot.voice_clients,guild=ctx.guild)
@@ -192,9 +200,11 @@ class MusicCommands(commands.Cog):
 			source = discord.FFmpegPCMAudio(executable='C:\\ffmpeg\\bin\\ffmpeg.exe',source=file)
 			if str(ctx.guild.id) in self.loops:		
 				music.play(source,after=lambda bruh: replay()) # THIS IS FUCKING CRASHING
+				music.source = discord.PCMVolumeTransformer(music.source,volume=self.volumes.get(ctx.guild.id,1.0))
 		if music.is_playing():
 			music.stop()
 		music.play(audio,after=lambda check: replay())
+		music.source = discord.PCMVolumeTransformer(music.source,volume=self.volumes.get(ctx.guild.id,1.0))
 		await ctx.send(f"playing {name}")
 	
 	@commands.command()
@@ -268,10 +278,28 @@ class MusicCommands(commands.Cog):
 		else:
 			await ctx.send("music not paused")
 
-	# @commands.command()
-	# async def volume(self,ctx,number:int):
-	# 	voice = get(self.bot.voice_clients,guild=ctx.guild)
-	# 	voice.source = discord.PCMVolumeTransformer(voice.source, volume=float(number/100))
-	# 	print(f"set volume to {float(number/100)}")
-	# 	print(voice.source.volume)
+	@commands.command()
+	async def setvolume(self,ctx,number:int):
+		voice = get(self.bot.voice_clients,guild=ctx.guild)
+		channel = ctx.author.voice.channel
+		if not channel:
+			await ctx.send("you are not in a channel")
+			return
+		if not voice:
+			await ctx.send("im not in a channel")
+		if not voice.is_playing():
+			await ctx.send("im not playing anything")
+			return
+		vol = float(number/100)
+		if ctx.guild.id not in self.volumes.keys():
+			self.volumes.update({ctx.guild.id:vol})
+		else:
+			self.volumes[ctx.guild.id] = vol
+		voice.source.volume = vol
+		await ctx.send(f"set volume to {vol*100}%")
+	
+	@commands.command()
+	async def volume(self,ctx):
+		x = self.volumes.get(ctx.guild.id,1.0)
+		await ctx.send(f"volume is currently {x*100}%")
 		
