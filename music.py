@@ -74,10 +74,10 @@ class MusicCommands(commands.Cog):
 		
 
 	@commands.command()
-	async def testplay(self,ctx):
+	async def testplay(self,ctx,name:str):
 		music = get(self.bot.voice_clients,guild=ctx.guild)
 		channel = ctx.author.voice.channel
-		audio = discord.FFmpegPCMAudio("test.mp3")
+		audio = discord.FFmpegPCMAudio(f"{name}.mp3")
 		if not channel:
 			await ctx.send("youre not in a channel")
 			return
@@ -85,7 +85,7 @@ class MusicCommands(commands.Cog):
 			await ctx.send("am not in channel")
 			return
 		def replay():
-			source = discord.FFmpegPCMAudio("test.mp3")
+			source = discord.FFmpegPCMAudio(f"{name}.mp3")
 			if str(ctx.guild.id) in self.loops:		
 				music.play(source,after=lambda bruh: replay()) # THIS IS FUCKING CRASHING
 				music.source = discord.PCMVolumeTransformer(music.source,volume=self.volumes.get(ctx.guild.id,1.0))
