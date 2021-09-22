@@ -302,4 +302,3 @@ class MusicCommands(commands.Cog):
 	async def volume(self,ctx):
 		x = self.volumes.get(ctx.guild.id,1.0)
 		await ctx.send(f"volume is currently {x*100}%")
-		
