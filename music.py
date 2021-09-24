@@ -133,7 +133,7 @@ class MusicCommands(commands.Cog):
 
 		print("\n\ndownloaded",title)
 		
-		audio = discord.FFmpegPCMAudio(executable='C:\\ffmpeg\\bin\\ffmpeg.exe',source=destiny)
+		audio = discord.FFmpegPCMAudio(source=destiny)
 		if not channel:
 			await ctx.send("youre not in a channel")
 			return
@@ -141,7 +141,7 @@ class MusicCommands(commands.Cog):
 			await ctx.send("am not in channel")
 			return
 		def replay():
-			source = discord.FFmpegPCMAudio(executable='C:\\ffmpeg\\bin\\ffmpeg.exe',source=f"music_files\\{filename}")
+			source = discord.FFmpegPCMAudio(source=f"music_files\\{filename}")
 			if str(ctx.guild.id) in self.loops:		
 				music.play(source,after=lambda bruh: replay()) # THIS IS FUCKING CRASHING
 				music.source = discord.PCMVolumeTransformer(music.source,volume=self.volumes.get(ctx.guild.id,1.0))
@@ -189,7 +189,7 @@ class MusicCommands(commands.Cog):
 
 		file = f"{os.getcwd()}\\kk_music\\{name}.mp3"
 		
-		audio = discord.FFmpegPCMAudio(executable='C:\\ffmpeg\\bin\\ffmpeg.exe',source=file)
+		audio = discord.FFmpegPCMAudio(source=file)
 		if not channel:
 			await ctx.send("youre not in a channel")
 			return
@@ -197,7 +197,7 @@ class MusicCommands(commands.Cog):
 			await ctx.send("am not in channel")
 			return
 		def replay():
-			source = discord.FFmpegPCMAudio(executable='C:\\ffmpeg\\bin\\ffmpeg.exe',source=file)
+			source = discord.FFmpegPCMAudio(source=file)
 			if str(ctx.guild.id) in self.loops:		
 				music.play(source,after=lambda bruh: replay()) # THIS IS FUCKING CRASHING
 				music.source = discord.PCMVolumeTransformer(music.source,volume=self.volumes.get(ctx.guild.id,1.0))
