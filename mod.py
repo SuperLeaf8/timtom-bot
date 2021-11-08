@@ -32,12 +32,25 @@ class ModCommands(commands.Cog):
 	
 	# look at this
 	def check_if_allowed(self,ctx,member):
-		return (ctx.author.top_role <= member.top_role and not ctx.author.guild_permissions.administrator) or (ctx.author != ctx.guild.owner)
+		mod = ctx.author
+		return not ((mod.top_role <= member.top_role and not mod.guild_permissions.administrator) or (mod != ctx.guild.owner) or (member.guild_permissions.administrator))
+
+	# I SWEAR IM NOT KEEPING THIS, THIS WAS JUST TO SEE IF I CAN IDAGH DOSHG IH
+	# def check_if_allowed(self,ctx,member):
+	# 	mod = ctx.author
+	# 	declined = [
+	# 		(mod.top_role <= member.top_role and not mod.guild_permissions.administrator),
+	# 		(mod != ctx.guild.owner),
+	# 		(member.guild_permissions.administrator)
+	# 	]
+	# 	[return True for reasob in declined if not reason]
+	# 	return False
 
     @commands.has_permissions(kick_members=True)
     @commands.command()
     async def kick(self, ctx, member: discord.Member,*,reason="no reason lol"):
-        if check_if_allowed(ctx,member):
+		allowed = check_if_allowed(ctx,member)
+        if not allowed:
             await ctx.send("you cant do that")
             return
         await member.kick(reason=reason)
