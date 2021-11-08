@@ -29,11 +29,15 @@ class ModCommands(commands.Cog):
             data.update({str(guild.id):str(role.id)})
         with open('muteroles.json','w') as f:
             json.dump(data,f,indent=4)
+	
+	# look at this
+	def check_if_allowed(self,ctx,member):
+		return (ctx.author.top_role <= member.top_role and not ctx.author.guild_permissions.administrator) or (ctx.author != ctx.guild.owner)
 
     @commands.has_permissions(kick_members=True)
     @commands.command()
     async def kick(self, ctx, member: discord.Member,*,reason="no reason lol"):
-        if (ctx.author.top_role <= member.top_role and not ctx.author.guild_permissions.administrator) or (ctx.author != ctx.guild.owner):
+        if check_if_allowed(ctx,member):
             await ctx.send("you cant do that")
             return
         await member.kick(reason=reason)
@@ -226,4 +230,4 @@ class ModCommands(commands.Cog):
             await ctx.send(f"i cant do that because i cant: {s.join(error.missing_perms)}")
         if isinstance(error,commands.CommandInvokeError):
             if isinstance(error.original,discord.errors.Forbidden):
-                await ctx.send("my role is too low probably")
+                await ctx.send("didnt work, my role is too low probably")

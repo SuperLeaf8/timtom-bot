@@ -17,6 +17,8 @@ IF YOURE GONNA MAKE THIS BOT PUBLIC YOU NEED TO MAKE SONG FILES FOR EACH SERVER
 and that might suck
 
 so lay off the music commands for now
+
+SCREW YOU PAST DENNIS I MADE IT WORK
 """
 
 # ydl_opts = {
@@ -47,15 +49,21 @@ class MusicCommands(commands.Cog):
 		self.loops = []
 		self.volumes = {}
 
-	
+	#### TEST FUNCTIONs
+	def check_channel(self,ctx):
+		channel = ctx.author.voice.channel
+		return channel
+	def check_bot_channel(self,ctx):
+		voice = get(self.bot.voice_clients,guild=ctx.guild)
+		return voice
 	@commands.command()
 	async def join(self, ctx):
-		channel = ctx.author.voice.channel
+		channel = self.check_channel(ctx)
+		bot_voice = self.check_bot_channel(ctx)
 		if not channel:
 			await ctx.send("youre not in a channel")
 			return
-		voice = get(self.bot.voice_clients,guild=ctx.guild)
-		if not voice:
+		if not bot_voice:
 			await channel.connect()
 			await ctx.send("joined")
 		else:
@@ -125,8 +133,8 @@ class MusicCommands(commands.Cog):
 		with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 			ydl.download([link])
 		
-		destiny = f"{os.getcwd()}\\music_files\\{filename}"
-		source = f"{os.getcwd()}\\{filename}"
+		destiny = f"{os.getcwd()}/music_files/{filename}"
+		source = f"{os.getcwd()}/{filename}"
 		
 
 		shutil.move(source,destiny)
@@ -141,7 +149,7 @@ class MusicCommands(commands.Cog):
 			await ctx.send("am not in channel")
 			return
 		def replay():
-			source = discord.FFmpegPCMAudio(source=f"music_files\\{filename}")
+			source = discord.FFmpegPCMAudio(source=f"{os.getcwd()}/music_files/{filename}")
 			if str(ctx.guild.id) in self.loops:		
 				music.play(source,after=lambda bruh: replay()) # THIS IS FUCKING CRASHING
 				music.source = discord.PCMVolumeTransformer(music.source,volume=self.volumes.get(ctx.guild.id,1.0))
@@ -150,12 +158,14 @@ class MusicCommands(commands.Cog):
 		music.play(audio,after=lambda check: replay())
 		music.source = discord.PCMVolumeTransformer(music.source,volume=self.volumes.get(ctx.guild.id,1.0))
 		await ctx.send("playing")
+	
 	@commands.command()
 	async def testfile(self,ctx):
 		music = get(self.bot.voice_clients,guild=ctx.guild)
 		channel = ctx.author.voice.channel
-		music.play(source = discord.FFmpegPCMAudio(source=f"music_files\\{ctx.guild.id}_music.mp3"))
+		music.play(source = discord.FFmpegPCMAudio(source=f"music_files/{ctx.guild.id}_music.mp3"))
 		music.source = discord.PCMVolumeTransformer(music.source,volume=1.0)
+	
 	@commands.command()
 	async def play(self, ctx,*,name):
 		music = get(self.bot.voice_clients,guild=ctx.guild)
