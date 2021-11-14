@@ -71,8 +71,7 @@ class CapitalistCommands(commands.Cog):
 			found = False
 			while not found:
 				reg_item = reg_items[randint(0,len(reg_items)-1)]
-				if not reg_item in items:
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																						found = True
+				if not reg_item in items:									found = True
 				# else:
 				# 	print("fuck")
 			items.append(reg_item)
