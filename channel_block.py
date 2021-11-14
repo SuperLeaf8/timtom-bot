@@ -11,4 +11,4 @@ async def if_channel_allowed(ctx):
         except:
             return True
 
-	"""tabby"""
+	# """tabby"""
