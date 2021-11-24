@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands, tasks
 from discord.ext.commands import cooldown
 import json
-import basics, capitalism, mod, music
+import basics, capitalism, mod, music,tests
 import screwaround
 
 """
@@ -137,7 +137,8 @@ cogs = [
 		capitalism.CapitalistCommands(bot),
 		mod.ModCommands(bot),
 		music.MusicCommands(bot),
-		screwaround.ScrewAround(bot)
+		screwaround.ScrewAround(bot),
+		tests.TestCommands(bot)
 	]
 for cog in cogs:
 	bot.add_cog(cog)

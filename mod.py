@@ -6,21 +6,8 @@ import traceback
 
 class ModCommands(commands.Cog):
 	def __init__(self, bot):
-	self.bot = bot
-
-	# instead of arg=None, maybe do arg=discord.Embed.Empty
-	def make_embed(title,desc=discord.Embed.Empty,color=discord.Color(0xffffff),footer=discord.Embed.Empty,footer_icon=discord.Embed.Empty,author=discord.Embed.Empty,avatar=discord.Embed.Empty,thumbnail=discord.Embed.Empty,*fields):
-		embed = discord.Embed(
-			title=title,
-			description=desc,
-			color=color
-		)
-		embed.set_footer(text=footer,icon_url=footer_icon)
-		embed.set_author(name=author,icon_url=avatar)
-		embed.set_thumbnail(url=thumbnail)
-		
-
-
+		self.bot = bot
+	
 	async def fixmute(self, guild):
 		try:
 			with open('muteroles.json','r') as f:
