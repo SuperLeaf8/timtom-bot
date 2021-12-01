@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 import json
 import traceback
+from embedder import make_embed
 
 class ModCommands(commands.Cog):
 	def __init__(self, bot):
@@ -55,12 +56,21 @@ class ModCommands(commands.Cog):
 			await ctx.send("you cant do that")
 			return
 		await member.kick(reason=reason)
-		embed = discord.Embed(
-			title="Kicked",
-			description=f"kicked because: {reason}",
-			color=discord.Color(0xffea08)
+		embed = make_embed(
+			title=f"Kicked {member.name}",
+			desc=f"Reason: {reason}",
+			color=discord.Color(0xffea08),
+			author=f"{member.name}#{member.discriminator}",
+			avatar=member.avatar_url,
+			footer="lol"
 		)
-		embed.set_author(name=f"{member.name}#{member.discriminator}",icon_url=member.avatar_url)
+		await ctx.send(embed=embed)
+		# embed = discord.Embed(
+		# 	title="Kicked",
+		# 	description=f"kicked because: {reason}",
+		# 	color=discord.Color(0xffea08)
+		# )
+		# embed.set_author(name=f"{member.name}#{member.discriminator}",icon_url=member.avatar_url)
 
 	@commands.has_permissions(kick_members=True)
 	@commands.command()
