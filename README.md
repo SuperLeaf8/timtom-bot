@@ -6,9 +6,9 @@ it like does stuff
 dependencies:
 - discord
 - pynacl
-- requests *
-- youtube-dl *
-- ffmpeg **
+- requests **
+- youtube-dl **
+- ffmpeg ****
 
--* for yt music, prob dont need these later
--** idek if i need this but i assume 
+- ** for yt music, prob dont need these later
+- **** idek if i need this but i assume 
