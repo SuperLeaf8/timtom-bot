@@ -50,7 +50,7 @@ class ModCommands(commands.Cog):
 	@commands.has_permissions(kick_members=True)
 	@commands.command()
 	async def kick(self, ctx, member: discord.Member,*,reason="no reason lol"):
-		allowed = check_if_allowed(ctx,member)
+		allowed = self.check_if_allowed(ctx,member)
 		if not allowed:
 			await ctx.send("you cant do that")
 			return
