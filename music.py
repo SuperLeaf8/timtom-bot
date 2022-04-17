@@ -160,8 +160,8 @@ class MusicCommands(commands.Cog):
 		await ctx.send("playing")
 	
 	def play_music(self,ctx,src_name):
-		channel = check_channel(ctx)
-		voice = check_bot_channel(ctx)
+		channel = self.check_channel(ctx)
+		voice = self.check_bot_channel(ctx)
 		# here, check if voice and channel are valid
 
 		#
@@ -169,12 +169,12 @@ class MusicCommands(commands.Cog):
 		if str(ctx.guild.id) in self.loops:
 			self.loops.remove(str(ctx.guild.id))
 		src = discord.FFmpegPCMAudio(source=src_name)
-		voice.source = discord.PCMVolumeTransformer(music.source,volume=1.0)
+		voice.source = discord.PCMVolumeTransformer(voice.source,volume=1.0)
 		def replay():
 			src = discord.FFmpegPCMAudio(source=src_name)
 			if str(ctx.guild.id) in self.loops:		
 				voice.play(src,after=lambda after: replay())
-				voice.source = discord.PCMVolumeTransformer(music.source,volume=self.volumes.get(ctx.guild.id,1.0))
+				voice.source = discord.PCMVolumeTransformer(voice.source,volume=self.volumes.get(ctx.guild.id,1.0))
 		voice.play(src,after=lambda after: replay())
 		
 		
