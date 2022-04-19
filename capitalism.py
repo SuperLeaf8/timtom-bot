@@ -8,12 +8,13 @@ from datetime import datetime
 import math
 import item
 
-int_per = 5
+interest = False
 
 class CapitalistCommands(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
-		self.interest.start()
+		if interest:
+			self.interest.start()
 		self.changeshop.start()
 	class Villager:
 		def __init__(self, start_debt, paid, balance):
@@ -41,7 +42,7 @@ class CapitalistCommands(commands.Cog):
 	
 	@tasks.loop(seconds=10)
 	async def interest(self):
-		global int_per
+		int_per = 5
 		now = datetime.now()
 		# here i would put a check to see when its time to apply interest
 		# example:
