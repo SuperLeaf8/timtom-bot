@@ -195,9 +195,12 @@ class MusicCommands(commands.Cog):
 		with open("inventory.json","r") as f:
 			data = json.load(f)
 			uitems = [] # the items the user actually has
-			for di in data[str(ctx.author.id)]:
-				uitem = item.Item(di["name"],di["type"],di["price"])
-				uitems.append(uitem)
+			try:
+				for di in data[str(ctx.author.id)]:
+					uitem = item.Item(di["name"],di["type"],di["price"])
+					uitems.append(uitem)
+			except KeyError:
+				data[str(ctx.author.id)] = {}
 			
 			exists = False
 			is_music = False

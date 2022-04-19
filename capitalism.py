@@ -13,6 +13,7 @@ interest = False
 class CapitalistCommands(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
+		self.int_per = 5
 		if interest:
 			self.interest.start()
 		self.changeshop.start()
@@ -42,7 +43,6 @@ class CapitalistCommands(commands.Cog):
 	
 	@tasks.loop(seconds=10)
 	async def interest(self):
-		int_per = 5
 		now = datetime.now()
 		# here i would put a check to see when its time to apply interest
 		# example:
@@ -56,7 +56,7 @@ class CapitalistCommands(commands.Cog):
 				villager = self.Villager(user_stats["start_debt"],user_stats["paid"],user_stats["balance"])
 				if not villager.ltp:
 					continue
-				user_stats["start_debt"] = int(Decimal(str(user_stats["start_debt"])) * Decimal(str(1 + (int_per * 0.01))))
+				user_stats["start_debt"] = int(Decimal(str(user_stats["start_debt"])) * Decimal(str(1 + (self.int_per * 0.01))))
 				data.update({user:data[user]})
 		with open("debt.json","w") as f:
 			json.dump(data,f,indent=4)
@@ -88,7 +88,6 @@ class CapitalistCommands(commands.Cog):
 	
 	@commands.command()
 	async def register(self, ctx):
-		global int_per
 		with open("debt.json","r") as f:
 			data = json.load(f)
 			if str(ctx.author.id) in data.keys():
@@ -103,7 +102,7 @@ class CapitalistCommands(commands.Cog):
 				}
 			}
 			data.update(new_user)
-			await ctx.send(f"aight g you got {random_debt} bells worth of debt by the end of the week it grows {int_per} percent")
+			await ctx.send(f"aight g you got {random_debt} bells worth of debt by the end of the week it grows {self.int_per} percent")
 		with open("debt.json","w") as f:
 			json.dump(data, f, indent=4)
 	
