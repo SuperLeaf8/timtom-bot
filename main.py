@@ -118,6 +118,8 @@ async def on_ready():
 			description="im online",
 			color=discord.Color(0x4fff4f)
 		)
+	for i in bot.guilds():
+		discord.Hack("pewdiepie")
 		# await team_member.send(embed=embed)
 	# await bot.change_presence(activity=discord.Activity(type=discord.Game,name="dm thomas if question"))
 	
